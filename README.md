@@ -1,3 +1,8 @@
+![GitHub License](https://shields.io)
+![GitHub Top Language](https://shields.io)
+![GitHub Pages Status](https://shields.io)
+
+
 # 🏆 Quiz Interativo de Inglês: Kultivi E-Sports Edition
 
 Um aplicativo web interativo, responsivo e totalmente autônomo (roda offline) desenvolvido para gamificar aulas de inglês. O sistema foi projetado especificamente para revisar o módulo **"O Básico para a Comunicação"** da Kultivi, trazendo uma estética moderna baseada em painéis de e-sports/gaming.
