@@ -69,5 +69,5 @@ Este projeto está sob a licença MIT - sinta-se livre para usar, estudar e apri
 
 #Autor: Luis Kenji Ido
 
-#Criado em: 23/07/2026
+#Criado em: 23/07/2026 - Criado com Google AI GEMINI
 
