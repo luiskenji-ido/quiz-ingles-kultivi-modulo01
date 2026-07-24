@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Kultivi - O Básico para a Comunicação</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-dark: #1e293b;
+            --primary-neon: #38bdf8;
+            --primary-hover: #0ea5e9;
+            --success-neon: #4ade80;
+            --danger-neon: #f87171;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glow: #334155;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 650px;
+            width: 100%;
+            background: var(--card-dark);
+            padding: 35px;
+            border-radius: 16px;
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
+            margin-top: 20px;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            text-align: center;
+            color: var(--text-main);
+            font-size: 2rem;
+            letter-spacing: 1px;
+            margin-top: 0;
+            background: linear-gradient(to right, #38bdf8, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h2, h3 { text-align: center; color: var(--text-main); margin-top: 0; }
+        .header-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #334155;
+        }
+        .timer {
+            color: var(--danger-neon);
+            font-size: 1.3rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(248, 113, 113, 0.4);
+        }
+        .options-container { display: flex; flex-direction: column; gap: 14px; margin-top: 25px; }
+        .option-btn {
+            background-color: #0f172a;
+            color: var(--text-main);
+            text-align: left;
+            padding: 16px;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary-neon);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+            background-color: #1e293b;
+            transform: translateY(-1px);
+        }
+        .correct {
+            background-color: rgba(74, 222, 128, 0.15) !important;
+            border-color: var(--success-neon) !important;
+            color: var(--success-neon) !important;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.3) !important;
+        }
+        .incorrect {
+            background-color: rgba(248, 113, 113, 0.15) !important;
+            border-color: var(--danger-neon) !important;
+            color: var(--danger-neon) !important;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(248, 113, 113, 0.3) !important;
+        }
+        button.action-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #0ea5e9, #a855f7);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+        }
+        button.action-btn:hover {
+            opacity: 0.95;
+            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.5);
+            transform: translateY(-1px);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #0f172a;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+        th, td { padding: 12px 15px; text-align: center; border-bottom: 1px solid #223047; }
+        th {
+            background-color: #1e293b;
+            color: var(--primary-neon);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+        td { color: #e2e8f0; }
+        tr:last-child td { border-bottom: none; }
+        .hidden { display: none !important; }
+        .center-text { text-align: center; }
+        #pergunta-texto {
+            color: #ffffff !important;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TELA 1: CONFIGURAÇÃO INICIAL (NOME DOS ALUNOS) -->
+    <div id="setup-screen" class="container center-text">
+        <h1>🏆 Quiz de Inglês: Kultivi</h1>
+        <p style="color: var(--text-muted); margin-bottom: 20px;">Módulo: O Básico para a Comunicação</p>
+        
+        <div style="text-align: left; max-width: 400px; margin: 0 auto; background: #0f172a; padding: 20px; border-radius: 10px; border: 1px solid #334155;">
+            <strong style="display: block; margin-bottom: 12px; color: var(--primary-neon);">Digite o nome dos alunos que vão jogar hoje:</strong>
+            <div style="margin-bottom: 10px;"><input type="text" id="input-aluno1" placeholder="Nome do Jogador 1" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: white; box-sizing: border-box;"></div>
+            <div style="margin-bottom: 10px;"><input type="text" id="input-aluno2" placeholder="Nome do Jogador 2" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: white; box-sizing: border-box;"></div>
+            <div style="margin-bottom: 10px;"><input type="text" id="input-aluno3" placeholder="Nome do Jogador 3" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: white; box-sizing: border-box;"></div>
+            <div style="margin-bottom: 10px;"><input type="text" id="input-aluno4" placeholder="Nome do Jogador 4" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: white; box-sizing: border-box;"></div>
+            <div style="margin-bottom: 15px;"><input type="text" id="input-aluno5" placeholder="Nome do Jogador 5" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: white; box-sizing: border-box;"></div>
+
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">* Deixe em branco caso algum aluno tenha faltado.</p>
+        </div>
+        <button class="action-btn" onclick="iniciarJogo()" style="max-width: 400px; margin-top: 20px;">Iniciar Jogo (50 min)</button>
+    </div>
+
+    <!-- TELA 2: O JOGO ATIVO -->
+    <div id="tela-jogo" class="container hidden">
+        <div class="header-status">
+            <div style="color: var(--primary-neon); font-weight: bold;">🎯 Vez de: -</div>
+            <div id="tempo" class="timer">⏱️ 50:00</div>
+        </div>
+        <h3 id="pergunta-texto">Carregando pergunta...</h3>
+        <div id="opcoes-container"></div>
+        <div id="feedback-caixa" class="feedback hidden" style="margin-top: 15px; padding: 16px; border-radius: 10px; font-weight: 500; background: #0f172a; border: 1px solid #334155; color: #f8fafc; text-align: left; box-shadow: 0 0 10px rgba(255,255,255,0.05);"></div>
+        <button id="btn-proxima" class="action-btn hidden" onclick="proximaPergunta()">Próxima Pergunta</button>
+        <h3 style="margin-top: 30px; text-align: center;">📊 Quadro de Pontos (Ao Vivo)</h3>
+        <table>
+            <thead><tr><th>Aluno</th><th>Pontos</th></tr></thead>
+            <tbody id="tabela-corpo"></tbody>
+        </table>
+    </div>
+
+    <!-- TELA 3: FIM DE JOGO -->
+    <div id="tela-fim" class="container center-text hidden" style="text-align: center;">
+        <h1>🏁 Fim de Jogo!</h1>
+        <h2>🏆 Quadro de Pontos Final</h2>
+        <table>
+            <thead><tr><th>Posição</th><th>Competidor</th><th>Pontuação</th></tr></thead>
+            <tbody id="tabela-fim-corpo"></tbody>
+        </table>
+        <button class="action-btn" onclick="location.reload()" style="margin-top: 20px;">Jogar Novamente</button>
+    </div>
+
+    <!-- INÍCIO DO SCRIPT -->
+    <script>
+        var tempoRestante = 50 * 60;
+        var alunos = [];
+        var indexAlunoAtual = 0;
+        var indexPerguntaAtual = 0;
+        var faceis = [
+            { q: "[FACIL] Which phrase is used to greet someone in the morning?", options: ["Good night", "Good morning", "Goodbye"], correct: "Good morning", reason: "Explicação: Good morning significa Bom dia. Usamos Good night apenas para nos despedir ao ir dormir." },
+            { q: "[FACIL] How do you politely greet a colleague when you arrive at work?", options: ["Hello, how are you?", "I am fine.", "See you later."], correct: "Hello, how are you?", reason: "Explicação: Hello, how are you? significa Olá, como vai você?, sendo a forma ideal e educada de iniciar o diálogo." },
+            { q: "[FACIL] Which of these is a way to say goodbye?", options: ["Good afternoon", "Goodbye", "Thank you"], correct: "Goodbye", reason: "Explicação: Goodbye é a palavra clássica para dizer Adeus ou Tchau." },
+            { q: "[FACIL] You are leaving a conversation with a friend. What do you say?", options: ["Good morning", "See you tomorrow!", "You are welcome"], correct: "See you tomorrow!", reason: "Explicação: See you tomorrow! significa Vejo você amanhã!, uma despedida muito comum entre amigos." },
+            { q: "[FACIL] How do you ask someone for their name?", options: ["What is your name?", "Where are your name?", "How is your name?"], correct: "What is your name?", reason: "Explicação: Em inglês perguntamos literalmente Qual é o seu nome? usando What is your name?." },
+            { q: "[FACIL] If someone asks Where are you from?, they want to know your...", options: ["Age", "Name", "Country or city of origin"], correct: "Country or city of origin", reason: "Explicação: A palavra Where indica lugar, logo a pergunta quer saber sua cidade ou país de origem (De onde você é?)." },
+            { q: "[FACIL] How do you say Por favor in English?", options: ["Thank you", "Please", "Excuse me"], correct: "Please", reason: "Explicação: Please é Por favor. Thank you é obrigado e Excuse me é com licença." },
+            { q: "[FACIL] When you want to say Obrigado, what do you say?", options: ["You're welcome", "Sorry", "Thank you"], correct: "Thank you", reason: "Explicação: Usamos Thank you ou simplesmente Thanks para agradecer." },
+            { q: "[FACIL] What is the correct translation for Boa tarde?", options: ["Good morning", "Good afternoon", "Good evening"], correct: "Good afternoon", reason: "Explicação: Afternoon significa tarde, então Good afternoon é a saudação correta para esse período." },
+            { q: "[FACIL] Choose the correct verb to be for the pronoun I.", options: ["is", "are", "am"], correct: "am", reason: "Explicação: O pronome I (Eu) possui uma conjugação única e exclusiva no presente: I am." },
+            { q: "[FACIL] She ______ a teacher.", options: ["am", "is", "are"], correct: "is", reason: "Explicação: Para a terceira pessoa do singular (He, She, It), usamos a forma is do verbo to be." },
+            { q: "[FACIL] Complete the sentence: He ______ my brother.", options: ["am", "is", "are"], correct: "is", reason: "Explicação: Como He (Ele) é singular masculino, a conjugação correta do verbo to be é is." },
+            { q: "[FACIL] How do you say the number 5 in English?", options: ["Fifty", "Five", "Fifteen"], correct: "Five", reason: "Explicação: Five é o número 5. Não confunda com Fifteen (15) ou Fifty (50)." },
+            { q: "[FACIL] How do you spell 1 in English?", options: ["One", "Once", "On"], correct: "One", reason: "Explicação: O número 1 por extenso escreve-se One." },
+            { q: "[FACIL] Which of these means Oi?", options: ["Hi", "Bye", "No"], correct: "Hi", reason: "Explicação: Hi e Hello são as formas mais comuns de dizer Oi ou Olá." },
+            { q: "[FACIL] How do you say 'Boa noite' when ARRIVING at a place or meeting someone?", options: ["Good night", "Good afternoon", "Good evening"], correct: "Good evening", reason: "Explicação: Em inglês, usamos Good evening para dizer boa noite ao chegar a um local. Good night é para despedidas." },
+            { q: "[FACIL] What is the abbreviation/contraction for 'I am'?", options: ["I'is", "I'm", "I're"], correct: "I'm", reason: "Explicação: A forma contraída e mais comum de 'I am' (eu sou/estou) no dia a dia é I'm." },
+            { q: "[FACIL] Complete the sentence: 'Mary ______ a good student.'", options: ["am", "is", "are"], correct: "is", reason: "Explicação: Como Mary equivale ao pronome 'She' (Ela), usamos a forma 'is' do verbo to be para o singular." },
+            { q: "[FACIL] How do you say the number '10' in English?", options: ["Two", "Ten", "Twelve"], correct: "Ten", reason: "Explicação: O número 10 por extenso escreve-se 'Ten'." },
+            { q: "[FACIL] Which month is the last month of the year?", options: ["November", "December", "January"], correct: "December", reason: "Explicação: O último mês do ano é dezembro, que em inglês se escreve 'December'." }
+        ];
+        var medias = [
+            { q: "[MEDIO] Which question asks for your age?", options: ["How old are you?", "How much are you?", "What is your age?"], correct: "How old are you?", reason: "Explicação: Em inglês, a estrutura nativa padrão para perguntar a idade é How old are you? (Quão velho você é?)." },
+            { q: "[MEDIO] Fill in the blank: My phone _______ is 555-1234.", options: ["name", "number", "address"], correct: "number", reason: "Explicação: Combinamos as palavras para formar Phone number (Número de telefone)." },
+            { q: "[MEDIO] When you meet someone for the first time, what is polite to say?", options: ["Goodbye", "See you later", "Nice to meet you"], correct: "Nice to meet you", reason: "Explicação: Nice to meet you é a expressão usada para dizer Prazer em conhecer você." },
+            { q: "[MEDIO] Complete the question: ______ you a student?", options: ["Is", "Are", "Am"], correct: "Are", reason: "Explicação: O pronome You (você/vocês) sempre é acompanhado pela forma plural do verbo to be: Are you?." },
+            { q: "[MEDIO] How do you say the number 15 in English?", options: ["Fifty", "Fifteen", "Five"], correct: "Fifteen", reason: "Explicação: Os números do 13 ao 19 terminam com o som teen. Logo, 15 é Fifteen." },
+            { q: "[MEDIO] Which day of the week comes after Tuesday?", options: ["Monday", "Thursday", "Wednesday"], correct: "Wednesday", reason: "Explicação: A sequência dos dias úteis é: Monday (segunda), Tuesday (terça) e Wednesday (quarta)." },
+            { q: "[MEDIO] If today is Friday, tomorrow is...", options: ["Saturday", "Sunday", "Thursday"], correct: "Saturday", reason: "Explicação: Friday é sexta-feira, portanto o dia seguinte (tomorrow) é Saturday (sábado)." },
+            { q: "[MEDIO] Complete the sentence: They ______ from New York.", options: ["am", "is", "are"], correct: "are", reason: "Explicação: They (Eles/Elas) representa o plural, exigindo o verbo to be na forma are." },
+            { q: "[MEDIO] What is the English word for the month Janeiro?", options: ["June", "January", "July"], correct: "January", reason: "Explicação: January é Janeiro. June é junho e July é julho." },
+            { q: "[MEDIO] How do you spell the number 12?", options: ["Two", "Twelve", "Twenty"], correct: "Twelve", reason: "Explicação: Escreve-se Twelve para o número 12. Twenty é vinte." },
+            { q: "[MEDIO] If someone says Thank you, what is the polite response?", options: ["You are welcome", "Goodbye", "Please"], correct: "You are welcome", reason: "Explicação: You are welcome é a expression mais comum para dizer De nada." },
+            { q: "[MEDIO] How do you spell 8 in English?", options: ["Eigth", "Eight", "Aight"], correct: "Eight", reason: "Explicação: A grafia correta do número 8 possui a terminação em ght: Eight." },
+            { q: "[MEDIO] Which phrase means Com licença?", options: ["I'm sorry", "Excuse me", "Welcome"], correct: "Excuse me", reason: "Explicação: Usamos Excuse me para pedir licença ou chamar a atenção de alguém educadamente." },
+            { q: "[MEDIO] Complete the sentence: We ______ learning English.", options: ["am", "is", "are"], correct: "are", reason: "Explicação: We (Nós) é a primeira pessoa do plural, logo a forma correta do verbo to be é are." },
+            { q: "[MEDIO] Which month comes after September?", options: ["August", "October", "November"], correct: "October", reason: "Explicação: O mês que vem após setembro (September) é outubro (October)." },
+            { q: "[MEDIO] How do you say 'Meus pais' in English?", options: ["My parents", "My relatives", "My fathers"], correct: "My parents", reason: "Explicação: Em inglês, a palavra 'parents' significa pai e mãe. Não confunda com 'relatives' (parentes)." },
+            { q: "[MEDIO] Complete the sentence: 'This is my notebook and ______ is my pen.'", options: ["these", "this", "those"], correct: "this", reason: "Explicação: Usamos 'this' (isto/esta) para apontar para um único objeto que está perto de quem fala." },
+            { q: "[MEDIO] Which of these is a correct response to 'How are you doing?'", options: ["I am doing great!", "Yes, I do.", "I am 20 years old."], correct: "I am doing great!", reason: "Explicação: 'How are you doing?' é uma variação de 'Como vai você?'. A resposta ideal diz como se sente." },
+            { q: "[MEDIO] What is the correct English word for the day 'Quinta-feira'?", options: ["Tuesday", "Thursday", "Wednesday"], correct: "Thursday", reason: "Explicação: 'Thursday' é quinta-feira. Cuidado para não confundir com 'Tuesday', que é terça-feira." },
+            { q: "[MEDIO] Fill in the blank: 'We ______ at school right now.'", options: ["am", "is", "are"], correct: "are", reason: "Explicação: Como o pronome 'We' (Nós) indica plural, a forma correta do verbo to be é 'are'." },
+            { q: "[MEDIO] How do you say 'Boa noite' when leaving a place or going to bed?", options: ["Good evening", "Good morning", "Good night"], correct: "Good night", reason: "Explicação: Usamos 'Good night' apenas para nos despedirmos à noite ou quando vamos dormir." },
+            { q: "[MEDIO] Complete the sentence: 'January is the ______ month of the year.'", options: ["second", "first", "third"], correct: "first", reason: "Explicação: Janeiro (January) é o primeiro ('first') mês do ano civil." },
+            { q: "[MEDIO] Which of the following is a weekend day in English?", options: ["Thursday", "Sunday", "Monday"], correct: "Sunday", reason: "Explicação: O fim de semana é composto por Saturday (sábado) e Sunday (domingo)." },
+            { q: "[MEDIO] How do you write the number 14 in English?", options: ["Forty", "Four", "Fourteen"], correct: "Fourteen", reason: "Explicação: Adicionamos o sufixo 'teen' ao número quatro, formando 'Fourteen'. Não confunda com 'Forty' (40)." },
+            { q: "[MEDIO] What is the correct English translation for 'Como se diz...?'", options: ["How do you spell...?", "How do you say...?", "What do you do...?"], correct: "How do you say...?", reason: "Explicação: Usamos 'How do you say...?' para perguntar como se diz algo em inglês." },
+            { q: "[MEDIO] Complete the sentence: 'Lucy and I ______ friends.'", options: ["am", "is", "are"], correct: "are", reason: "Explicação: 'Lucy and I' equivale a 'We' (Nós). Por ser plural, usamos 'are'." },
+            { q: "[MEDIO] Which month comes right before December?", options: ["November", "October", "January"], correct: "November", reason: "Explicação: O mês que antecede dezembro é novembro (November)." },
+            { q: "[MEDIO] How do you write the number 11 in English?", options: ["Eleven", "Seven", "Twelve"], correct: "Eleven", reason: "Explicação: O número 11 escreve-se por extenso como 'Eleven'." },
+            { q: "[MEDIO] Complete the sentence: 'What ______ your e-mail address?'", options: ["am", "is", "are"], correct: "is", reason: "Explicação: Como endereço de e-mail é um termo no singular, usamos 'is'." },
+            { q: "[MEDIO] Which day of the week is usually considered the first business day?", options: ["Friday", "Sunday", "Monday"], correct: "Monday", reason: "Explicação: 'Monday' significa segunda-feira, sendo comercialmente o primeiro dia útil." },
+            { q: "[MEDIO] He always ______ TV in the evening. (Watch)", options: ["watches", "watchs", "watch"], correct: "watches", reason: "Explicação: Para verbos terminados em CH, SH, SS, X, O, Z, adicionamos ES na 3ª pessoa do singular (He/She/It). Logo, watch vira watches." },
+            { q: "[MEDIO] She ______ her homework every afternoon. (Do)", options: ["dos", "do", "does"], correct: "does", reason: "Explicação: O verbo 'do' termina com a letra O. Seguindo a regra da 3ª pessoa do singular, adicionamos ES, transformando-o em 'does'." },
+            { q: "[MEDIO] The student ______ English every day. (Study)", options: ["studies", "studys", "study"], correct: "studies", reason: "Explicação: Quando um verbo termina em CONSOANTE + Y (como stuDy), eliminamos o Y e adicionamos IES para He/She/It. Study vira studies." },
+            { q: "[MEDIO] He ______ his teeth after breakfast. (Brush)", options: ["brushs", "brushes", "brush"], correct: "brushes", reason: "Explicação: O verbo 'brush' termina em SH. Na regra de He, She e It, verbos com essa terminação recebem ES no final, virando 'brushes'." },
+            { q: "[MEDIO] My friend ______ his family a lot. (Miss)", options: ["miss", "misses", "missses"], correct: "misses", reason: "Explicação: Verbos terminados em SS, como 'miss', recebem a terminação ES na terceira pessoa do singular. O correto é 'misses'." },
+            { q: "[MEDIO] The mechanic ______ the old car. (Fix)", options: ["fixes", "fixs", "fix"], correct: "fixes", reason: "Explicação: Para verbos terminados na letra X, a regra do Simple Present para a terceira pessoa exige o acréscimo de ES. Portanto, vira 'fixes'." },
+            { q: "[MEDIO] She ______ when she watches a sad movie. (Cry)", options: ["crys", "cry", "cries"], correct: "cries", reason: "Explicação: Como o verbo 'cry' termina em CONSOANTE + Y (cr), substituímos o Y por IES ao conjugar com She. O correto é 'cries'." },
+            { q: "[MEDIO] The bee ______ around the flowers. (Buzz)", options: ["buzzes", "buzzs", "buzz"], correct: "buzzes", reason: "Explicação: Verbos terminados na letra Z, como 'buzz', seguem a regra geral das terminações especiais e recebem ES, virando 'buzzes'." },
+            { q: "[MEDIO] He ______ to the gym on weekends. (Go)", options: ["gos", "goes", "go"], correct: "goes", reason: "Explicação: O verbo 'go' termina com a letra O. Na terceira pessoa do singular do presente, ele ganha a terminação ES, virando 'goes'." },
+            { q: "[MEDIO] She ______ very hard for the exams. (Try)", options: ["trys", "try", "tries"], correct: "tries", reason: "Explicação: O verbo 'try' termina com CONSOANTE + Y (tr). Para He, She ou It, removemos o Y e colocamos IES, resultando em 'tries'." },
+            { q: "[MEDIO] I drink water every day because it is healthy. What does 'every day' mean?", options: ["Todos os dias", "Uma vez por semana", "Raramente"], correct: "Todos os dias", reason: "Explicação: 'Every day' significa 'todos os dias'. É uma das expressões de frequência mais comuns do Simple Present." },
+            { q: "[MEDIO] They pay the rent every month. How often do they pay?", options: ["Toda semana", "Uma vez por ano", "Todo mês"], correct: "Todo mês", reason: "Explicação: 'Every month' significa 'todo mês'. Usamos 'every' seguido de um período de tempo para indicar um hábito regular." },
+            { q: "[MEDIO] We visit our grandparents every week. This means:", options: ["Nós os visitamos toda semana.", "Nós os visitamos todo ano.", "Nós os visitamos aos sábados."], correct: "Nós os visitamos toda semana.", reason: "Explicação: 'Every week' traduz-se como 'toda semana'. Indica uma ação que se repete a cada ciclo de sete dias." },
+            { q: "[MEDIO] He travels to the beach every weekend. When does he travel?", options: ["Todo fim de semana", "Todo final de ano", "Uma vez por mês"], correct: "Todo fim de semana", reason: "Explicação: 'Weekend' significa fim de semana (sábado e domingo). Portanto, 'every weekend' é 'todo fim de semana'." },
+            { q: "[MEDIO] She celebrates her birthday every year. This happens:", options: ["Todo mês", "Todo ano", "Apenas uma vez"], correct: "Todo ano", reason: "Explicação: 'Every year' significa 'todo ano' ou 'anualmente'. É o período correto para eventos como aniversários." },
+            { q: "[MEDIO] He goes to the dentist once a year. What does 'once a' mean?", options: ["Duas vezes por", "Uma vez por", "Muitas vezes por"], correct: "Uma vez por", reason: "Explicação: Em inglês, a palavra 'once' significa 'uma vez'. Portanto, 'once a year' é 'uma vez por ano'." },
+            { q: "[MEDIO] She plays volleyball twice a week. What does 'twice a' mean?", options: ["Uma vez por", "Três vezes por", "Duas vezes por"], correct: "Duas vezes por", reason: "Explicação: A palavra 'twice' significa 'duas vezes'. Logo, 'twice a week' corresponde a 'duas vezes por semana'." },
+            { q: "[MEDIO] Mark exercises thrice a week. This is the same as saying:", options: ["Three times a week", "Two times a week", "Once a week"], correct: "Three times a week", reason: "Explicação: Embora 'three times' seja muito comum, a palavra tradicional para 'três vezes' em inglês é 'thrice'." },
+            { q: "[MEDIO] Complete: I take a shower ______ day. (Todos os dias)", options: ["once", "twice", "every"], correct: "every", reason: "Explicação: Para indicar a ideia de 'todo' ou 'cada' em uma rotina diária, usamos a palavra 'every' (every day)." },
+            { q: "[MEDIO] Complete: They clean the house ______ a week. (Uma vez por semana)", options: ["once", "twice", "every"], correct: "once", reason: "Explicação: A estrutura correta para indicar que algo acontece apenas uma vez em um ciclo é 'once a' (once a week)." }
+
+        ];
+
+        var dificeis = [
+            { q: "[DIFICIL] What is the negative form of He is a doctor?", options: ["He not is a doctor", "He is not a doctor", "He am not a doctor"], correct: "He is not a doctor", reason: "Explicação: Na negação com o verbo to be, a palavra not deve vir obrigatoriamente logo DEPOIS do verbo conjugado (is not)." },
+            { q: "[DIFICIL] You want to find out how to spell someone's name. What do you ask?", options: ["How do you spell your name?", "What is your spell?", "How do you write name?"], correct: "How do you spell your name?", reason: "Explicação: O verbo to spell significa soletrar. A pergunta correta é How do you spell your name?." },
+            { q: "[DIFICIL] Which greeting is considered the most formal to meet a business partner?", options: ["What's up?", "How do you do?", "Hey there!"], correct: "How do you do?", reason: "Explicação: How do you do? é uma saudação extremamente formal equivalente a Como vai? no ambiente profissional." },
+            { q: "[DIFICIL] How do you say the number 20 in English?", options: ["Twelve", "Two", "Twenty"], correct: "Twenty", reason: "Explicação: Twenty é o número vinte. As dezenas redondas em inglês costumam terminar com o som ty." },
+            { q: "[DIFICIL] What is an alternative phrase for De nada when replying to Thanks?", options: ["Don't mention it", "Please", "Excuse me"], correct: "Don't mention it", reason: "Explicação: Uma alternativa idiomática e elegante para dizer De nada é Don't mention it (Não há de quê)." },
+            { q: "[DIFICIL] Complete the question: ______ John and Mary teachers?", options: ["Is", "Are", "Am"], correct: "Are", reason: "Explicação: John and Mary equivalem ao sujeito plural 'Eles', exigindo o uso de Are." },
+            { q: "[DIFICIL] How do you say Me desculpe pelo atraso in English?", options: ["I am sorry for the late", "I am sorry I am late", "Excuse me late"], correct: "I am sorry I am late", reason: "Explicação: A expressão correta usada pelos nativos é I am sorry I am late (Desculpe-me, estou atrasado)." },
+            { q: "[DIFICIL] Which of these represents a typical formal evening greeting when arriving?", options: ["Good night", "Good evening", "Good afternoon"], correct: "Good evening", reason: "Explicação: Ao CHEGAR a um local à noite, usamos sempre Good evening. Só usamos Good night na despedida." },
+            { q: "[DIFICIL] Complete with the correct contraction: ______ from Brazil. (Nos somos)", options: ["I'm", "They're", "We're"], correct: "We're", reason: "Explicação: A contração da palavra We com o verbo are resulta na forma We're." },
+            { q: "[DIFICIL] If someone asks What do you do?, they want to know your...", options: ["Hobby", "Profession / Job", "Location"], correct: "Profession / Job", reason: "Explicação: Em inglês, a pergunta What do you do? é usada para questionar a profissão de alguém." },
+            { q: "[DIFICIL] What is the correct question to ask about someone's phone number?", options: ["What is your phone number?", "How is your phone number?", "Which is your phone number?"], correct: "What is your phone number?", reason: "Explicação: Embora em português usemos 'Qual', em inglês a estrutura correta exige 'What'." },
+            { q: "[DIFICIL] Complete the sentence: 'This is my car and that is ______ car.' (dela)", options: ["she", "her", "his"], correct: "her", reason: "Explicação: 'Her' é o adjetivo possessivo correto para indicar posse de um sujeito feminino (dela)." },
+            { q: "[DIFICIL] Choose the correct negative contraction: 'They ______ students.'", options: ["isn't", "aren't", "am not"], correct: "aren't", reason: "Explicação: Para o pronome plural 'They', a contração negativa correta é 'aren't'." },
+            { q: "[DIFICIL] What is the correct way to make this sentence interrogative: 'You are from Canada.'?", options: ["You are from Canada?", "Are you from Canada?", "Is you from Canada?"], correct: "Are you from Canada?", reason: "Explicação: Para perguntas com o Verbo To Be, colocamos o verbo ('Are') antes do pronome ('you')." },
+            { q: "[DIFICIL] Complete the dialog: 'How are you?' - '______, thanks. And you?'", options: ["Nice to meet you", "I am fine", "Goodbye"], correct: "I am fine", reason: "Explicação: 'I am fine' (Estou bem) é a resposta padrão para a pergunta 'How are you?'." },
+            { q: "[DIFICIL] Complete the sentence: 'The teachers ______ in the classroom.'", options: ["am", "is", "are"], correct: "are", reason: "Explicação: Como 'The teachers' está no plural, a conjugação correta é 'are'." },
+            { q: "[DIFICIL] Which contraction means 'It is not'?", options: ["It'snothin", "It isn't", "It aren't"], correct: "It isn't", reason: "Explicação: A contração correta para a terceira pessoa neutra no negativo é 'It isn't'." },
+            { q: "[DIFICIL] How do you say 'De onde ela é?' in English?", options: ["Where is she from?", "Where are she from?", "Where she is from?"], correct: "Where is she from?", reason: "Explicação: Em perguntas com 'Where', o verbo ('is') vem antes do sujeito ('she')." },
+            { q: "[DIFICIL] Complete the sentence: 'This is ______ book.' (meu)", options: ["I", "me", "my"], correct: "my", reason: "Explicação: 'My' é o adjetivo possessivo colocado antes de um substantivo para indicar que me pertence." },
+            { q: "[DIFICIL] Which response is best when you don't understand what someone said?", options: ["Pardon me?", "Goodbye", "You are welcome"], correct: "Pardon me?", reason: "Explicação: 'Pardon me?' é uma forma muito educada de pedir para alguém repetir algo que você não entendeu." },
+            { q: "[DIFICIL] Choose the correct negative sentence for: 'He washes the car.'", options: ["He doesn't washes the car.", "He doesn't wash the car.", "He don't wash the car."], correct: "He doesn't wash the car.", reason: "Explicação: No Simple Present negativo para He/She/It, usamos o auxiliar 'doesn't'. Quando o auxiliar aparece, o verbo principal volta para a forma base (wash), perdendo o 'es'." },
+            { q: "[DIFICIL] Which question is grammatically correct?", options: ["Does she studies English?", "Does she study English?", "Do she studies English?"], correct: "Does she study English?", reason: "Explicação: Em perguntas com 'Does', o verbo principal deve ficar na forma base (study). A regra do 'ies' não se aplica quando o auxiliar já está na frase." },
+            { q: "[DIFICIL] Complete the sentence: 'The wind ______ the dry leaves.' (Fly)", options: ["flys", "flyes", "flies"], correct: "flies", reason: "Explicação: 'The wind' (O vento) equivale ao pronome neutro 'It'. Como o verbo 'fly' termina em consoante + Y (fl), substituímos o Y por IES, resultando em 'flies'." },
+            { q: "[DIFICIL] Complete the sentence: 'Nobody ______ why he does that.' (Know)", options: ["know", "knows", "knowes"], correct: "knows", reason: "Explicação: Em inglês, pronomes indefinidos como 'Nobody' (Ninguém) ou 'Somebody' são tratados gramaticalmente como 3ª pessoa do maior singular (He/She). Portanto, o verbo recebe o 's' (knows)." },
+            { q: "[DIFICIL] Which sentence is correct for a routine?", options: ["My father relaxs after dinner.", "My father relaxes after dinner.", "My father relax after dinner."], correct: "My father relaxes after dinner.", reason: "Explicação: 'My father' equivale a 'He'. O verbo 'relax' termina com a letra X, logo a regra gramatical exige o acréscimo de 'es' no final (relaxes)." },
+            { q: "[DIFICIL] Complete the question: '______ your mother ______ to the supermarket?' (Go)", options: ["Does / goes", "Does / go", "Do / go"], correct: "Does / go", reason: "Explicação: 'Your mother' equivale a 'She', exigindo o auxiliar 'Does'. Por ser uma pergunta, o verbo principal 'go' deve permanecer na sua forma base." },
+            { q: "[DIFICIL] Complete the sentence: 'John, unlike his brothers, ______ very hard.' (Try)", options: ["tries", "trys", "try"], correct: "tries", reason: "Explicação: A expressão entre vírgulas não muda o sujeito principal, que é 'John' (He). O verbo 'try' termina em consoante + Y (tr), transformando-se em 'tries'." },
+            { q: "[DIFICIL] What is the correct negative form of: 'She does her homework.'?", options: ["She doesn't her homework.", "She doesn't do her homework.", "She don't do her homework."], correct: "She doesn't do her homework.", reason: "Explicação: Na frase original, 'does' é o verbo principal (fazer). Na negação, precisamos do auxiliar 'doesn't' E do verbo principal na forma base 'do', resultando em 'doesn't do'." },
+            { q: "[DIFICIL] Complete the sentence: 'The company ______ its budget every year.' (Fix)", options: ["fixs", "fix", "fixes"], correct: "fixes", reason: "Explicação: 'The company' (A empresa) é um sujeito maior singular equivalente a 'It'. Como o verbo 'fix' termina em X, adicionamos 'es' para formar 'fixes'." },
+            { q: "[DIFICIL] Complete the question: 'Why ______ he ______ so much?' (Cry)", options: ["does / cries", "does / cry", "do / cry"], correct: "does / cry", reason: "Explicação: Em perguntas com pronomes interrogativos (Why), a estrutura do Simple Present com 'He' mantém o auxiliar 'does' e o verbo na forma base 'cry'." }
+        ];
+
+        // Junta todas as perguntas em um único array oficial do sistema
+        var perguntas = faceis.concat(medias).concat(dificeis);
+        function iniciarJogo() {
+            alunos = [];
+            for (var idx = 1; idx <= 5; idx++) {
+                var inputEl = document.getElementById('input-aluno' + idx);
+                if (inputEl) {
+                    var nomeDigitado = inputEl.value.trim();
+                    if (nomeDigitado !== "") {
+                        alunos.push({ nome: nomeDigitado, pontos: 0, erros: 0 });
+                    }
+                }
+            }
+            if (alunos.length === 0) {
+                alert("Por favor, digite o nome de pelo menos 1 aluno para jogar!");
+                return;
+            }
+            
+            perguntas.sort(function() { return 0.5 - Math.random(); });
+
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('tela-jogo').classList.remove('hidden');
+            
+            atualizarTabelaVisual();
+            mostrarPerguntaAtual();
+            
+            setInterval(function() {
+                if (tempoRestante > 0) {
+                    tempoRestante--;
+                    var mins = Math.floor(tempoRestante / 60);
+                    var secs = tempoRestante % 60;
+                    if (mins < 10) mins = '0' + mins;
+                    if (secs < 10) secs = '0' + secs;
+                    document.getElementById('tempo').innerText = '⏱️ ' + mins + ':' + secs;
+                }
+            }, 1000);
+        }
+
+        function mostrarPerguntaAtual() {
+            if (indexPerguntaAtual >= 45) {
+                finalizarJogo();
+                return;
+            }
+            document.getElementById('btn-proxima').classList.add('hidden');
+            var caixaFeedback = document.getElementById('feedback-caixa');
+            if (caixaFeedback) {
+                caixaFeedback.style.display = 'none';
+                caixaFeedback.classList.add('hidden');
+            }
+            var elementoVez = document.querySelector("#tela-jogo .header-status div");
+            if (elementoVez) {
+                elementoVez.innerHTML = "🎯 Vez de: <span style='color:#38bdf8; font-weight:bold;'>" + alunos[indexAlunoAtual].nome + "</span>";
+            }
+            var dadosPergunta = perguntas[indexPerguntaAtual];
+            document.getElementById('pergunta-texto').innerText = dadosPergunta.q;
+            var container = document.getElementById('opcoes-container');
+            container.innerHTML = ''; 
+            for (var i = 0; i < dadosPergunta.options.length; i++) {
+                var botao = document.createElement('button');
+                botao.className = 'option-btn';
+                botao.innerText = dadosPergunta.options[i];
+                configurarClique(botao, dadosPergunta.options[i], dadosPergunta);
+                container.appendChild(botao);
+            }
+        }
+        function configurarClique(elementoBotao, textoOpcao, dadosPergunta) {
+            elementoBotao.onclick = function() {
+                var todosBotoes = document.querySelectorAll('.option-btn');
+                for (var j = 0; j < todosBotoes.length; j++) {
+                    todosBotoes[j].disabled = true;
+                }
+                var caixaFeedback = document.getElementById('feedback-caixa');
+                if (caixaFeedback) {
+                    caixaFeedback.innerText = dadosPergunta.reason;
+                    caixaFeedback.style.display = 'block';
+                    caixaFeedback.classList.remove('hidden');
+                }
+                if (textoOpcao === dadosPergunta.correct) {
+                    elementoBotao.className = "option-btn correct";
+                    if (caixaFeedback) caixaFeedback.style.borderLeft = "5px solid #4ade80";
+                    alunos[indexAlunoAtual].pontos += 1;
+                } else {
+                    elementoBotao.className = "option-btn incorrect";
+                    if (caixaFeedback) caixaFeedback.style.borderLeft = "5px solid #f87171";
+                    alunos[indexAlunoAtual].erros += 1;
+                    for (var m = 0; m < todosBotoes.length; m++) {
+                        if (todosBotoes[m].innerText === dadosPergunta.correct) {
+                            todosBotoes[m].className = "option-btn correct";
+                        }
+                    }
+                }
+                atualizarTabelaVisual();
+                document.getElementById('btn-proxima').classList.remove('hidden');
+            };
+        }
+
+        function atualizarTabelaVisual() {
+            var corpo = document.getElementById("tabela-corpo");
+            if (!corpo) return;
+            corpo.innerHTML = ""; 
+            for (var k = 0; k < alunos.length; k++) {
+                var linha = "<tr><td>" + alunos[k].nome + "</td><td><strong>" + alunos[k].pontos + " acertos / " + alunos[k].erros + " erros</strong></td></tr>";
+                corpo.innerHTML += linha;
+            }
+        }
+
+        function proximaPergunta() {
+            indexPerguntaAtual++;
+            if (indexPerguntaAtual >= 45) {
+                finalizarJogo();
+                return;
+            }
+            indexAlunoAtual = (indexAlunoAtual + 1) % alunos.length;
+            mostrarPerguntaAtual();
+        }
+
+        function finalizarJogo() {
+            document.getElementById('tela-jogo').classList.add('hidden');
+            document.getElementById('tela-fim').classList.remove('hidden');
+            var corpoFim = document.getElementById('tabela-fim-corpo');
+            if (!corpoFim) return;
+            corpoFim.innerHTML = '';
+            var tituloFim = document.querySelector("#tela-fim h2");
+            if (tituloFim) {
+                tituloFim.innerHTML = "🏆 Quadro de Pontos Final <br><span style='font-size:1.1rem; color:var(--primary-neon);'>(Total de Perguntas no Quiz: " + indexPerguntaAtual + ")</span>";
+            }
+            var ranking = [].concat(alunos).sort(function(a, b) { return b.pontos - a.pontos; });
+            var medalhas = ["🥇 1º Lugar", "🥈 2º Lugar", "🥉 3º Lugar", "👤 4º Lugar", "👤 5º Lugar"];
+            for (var n = 0; n < ranking.length; n++) {
+                var linhaHtml = "<tr>" +
+                    "<td style='padding: 12px 15px; border-bottom: 1px solid #223047; font-weight: bold;'> " + medalhas[n] + "</td>" +
+                    "<td style='padding: 12px 15px; border-bottom: 1px solid #223047; font-weight: bold;'>" + ranking[n].nome + "</td>" +
+                    "<td style='padding: 12px 15px; border-bottom: 1px solid #223047; color: var(--success-neon); font-weight: bold;'>" + ranking[n].pontos + " acertos / " + ranking[n].erros + " erros</td>" +
+                "</tr>";
+                corpoFim.innerHTML += linhaHtml;
+            }
+        }
+    </script>
+</body>
+</html>
+
+
