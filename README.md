@@ -34,7 +34,7 @@ O projeto foi desenvolvido utilizando tecnologias web nativas ("Vanilla Web"), o
 Como o software é totalmente autônomo, não é necessário instalar servidores ou gerenciadores de pacotes:
 
 1. Faça o download ou clone este repositório.
-2. Dê dois cliques no arquivo `quiz.html` para abri-lo diretamente em qualquer navegador moderno (Chrome, Edge, Firefox, Safari).
+2. Dê dois cliques no arquivo `index.html` para abri-lo diretamente em qualquer navegador moderno (Chrome, Edge, Firefox, Safari).
 3. Digite os nomes dos competidores na tela inicial e clique em **Iniciar Jogo**.
 
 ---
@@ -61,6 +61,8 @@ Este projeto está sob a licença MIT - sinta-se livre para usar, estudar e apri
 
 ---
 *Desenvolvido com carinho para transformar a educação e engajar salas de aula através da tecnologia!*
+
 #Autor: Luis Kenji Ido
+
 #Criado em: 23/07/2026
 
