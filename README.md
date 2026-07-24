@@ -15,7 +15,7 @@ Um aplicativo web interativo, responsivo e totalmente autônomo (roda offline) d
 ## 🚀 Funcionalidades Principais
 
 *   **Gerenciamento Dinâmico de Turmas:** Interface inicial que permite cadastrar até 5 alunos por partida. O sistema ignora campos em branco automaticamente, adaptando o rodízio em caso de faltas.
-*   **Banco de Dados com 80 Questões:** perguntas divididas cirurgicamente entre os níveis **Fácil, Médio e Difícil**, cobrindo saudações, números, rotinas, e regras complexas do *Simple Present* (como as terminações especiais de 3ª pessoa: CH, SH, SS, X, O, Z e consoante + Y).
+*   **Banco de Dados com 120 Questões:** perguntas divididas cirurgicamente entre os níveis **Fácil, Médio e Difícil**, cobrindo saudações, números, rotinas, e regras complexas do *Simple Present* (como as terminações especiais de 3ª pessoa: CH, SH, SS, X, O, Z e consoante + Y).
 *   **Algoritmo de Aleatoriedade Inteligente:** A cada carregamento, as perguntas são embaralhadas via JavaScript. O jogo seleciona 45 rodadas aleatórias, garantindo que nenhuma partida seja igual à outra.
 *   **Feedback Pedagógico Instantâneo:** Ao responder, o aluno recebe validação visual imediata (Verde para acerto / Vermelho para erro) e uma caixa com a explicação gramatical da questão.
 *   **Métricas de Desempenho ao Vivo:** O placar computa e exibe em tempo real o saldo de **Acertos e Erros** de cada participante.
