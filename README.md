@@ -60,5 +60,7 @@ perguntas.sort(function() { return 0.5 - Math.random(); });
 Este projeto está sob a licença MIT - sinta-se livre para usar, estudar e aprimorar a ferramenta para suas próprias dinâmicas pedagógicas.
 
 ---
-*Desenvolvido com carinho para transformar a educação e engajar salas de aula através da tecnologia!* 🎮🇺🇸
+*Desenvolvido com carinho para transformar a educação e engajar salas de aula através da tecnologia!*
+#Autor: Luis Kenji Ido
+#Criado em: 23/07/2026
 
